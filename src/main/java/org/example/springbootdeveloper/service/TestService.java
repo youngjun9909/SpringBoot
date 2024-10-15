@@ -1,6 +1,8 @@
-package org.example.springbootdeveloper;
+package org.example.springbootdeveloper.service;
 
 
+import org.example.springbootdeveloper.entity.Member;
+import org.example.springbootdeveloper.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
