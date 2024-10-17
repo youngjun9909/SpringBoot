@@ -26,7 +26,7 @@ public class h_dispatchServlet {
     : Handler가 요청을 처리하고, 결과를 어댑터로 반환
 
     5. @RestController 사용 시
-    > View와 ViewReslver를 거치지 않음
+    > View와 ViewResolver를 거치지 않음
     : MessageConverter를 통해 JSON 형식으로 변환
     : ResponseBody에 담겨 JSON 데이터가 클라이언트에게 전달
 

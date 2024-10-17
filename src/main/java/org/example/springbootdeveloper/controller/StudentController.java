@@ -32,6 +32,7 @@ public class StudentController {
         return stService.getAllStudents();
     }
 
+
     // 2) ID로 학생 조회(GET) - 특정 ID 학생 정보 반환
     @GetMapping("/{id}")
     public StudentDto getStudentById(@PathVariable Long id) {
