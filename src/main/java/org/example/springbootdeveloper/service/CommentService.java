@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -41,9 +42,12 @@ public class CommentService {
 
     public ResponseDto<List<CommentResponseDto>> getCommentsByPost(Long postId) {
         try{
-            Comment comment = commentRepository.findById(postId)
-                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다" + postId));
-            return ResponseDto.setSuccess("조회 성공", Collections.singletonList(convertToCommentResponseDto(comment)));
+            List<Comment> comments = commentRepository.findByPostId(postId);
+            List<CommentResponseDto> commentResponseDtos = comments.stream()
+                    .map(this :: convertToCommentResponseDto)
+                    .collect(Collectors.toList());
+            return ResponseDto.setSuccess("조회 성공", commentResponseDtos);
+
         } catch (Exception e) {
             return ResponseDto.setFailed("댓글 조회 중 오류가 발생했습니다: " + e.getMessage());
         }

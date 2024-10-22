@@ -35,6 +35,7 @@ public class CommentController {
         return commentService.getCommentsByPost(postId);
     }
 
+
     @PutMapping("/{commentId}")
     public ResponseDto<CommentResponseDto> updateComment (@PathVariable Long commentId, @RequestBody CommentRequestDto newContent) {
         return commentService.updateComment(commentId, newContent);

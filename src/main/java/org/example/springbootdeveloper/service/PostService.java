@@ -76,6 +76,7 @@ public class PostService {
     }
 
     private PostResponseDto convertToPostResponseDto(Post post) {
+        // 삼황 연산자
         List<CommentResponseDto> commentDtos = (post.getComments() != null) ? post.getComments().stream()
                 .map(comment -> new CommentResponseDto(comment.getId(), post.getId(), comment.getContent(), comment.getCommenter()))
                 .collect(Collectors.toList()) : new ArrayList<CommentResponseDto>();
@@ -83,5 +84,18 @@ public class PostService {
         return new PostResponseDto(
                 post.getId(), post.getTitle(), post.getContent(), post.getAuthor(), commentDtos
         );
+    }
+
+    public ResponseDto<List<PostResponseDto>> findByAuthor(String postAuthor) {
+        try{
+            List<Post> posts = postRepository.findByAuthor(postAuthor);
+            List<PostResponseDto> postResponseDtos = posts.stream()
+                    .map(this::convertToPostResponseDto)
+                    .collect(Collectors.toList());
+            return ResponseDto.setSuccess("조회 성공", postResponseDtos);
+        } catch (Exception e) {
+            return ResponseDto.setFailed(("게시물 조회에 실패하였습니다."+ e.getMessage()));
+        }
+
     }
 }

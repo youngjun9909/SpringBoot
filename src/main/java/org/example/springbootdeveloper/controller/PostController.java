@@ -27,7 +27,13 @@ public class PostController {
         return postService.getPostById(postId);
    }
 
-   @GetMapping
+    @GetMapping("/author/{postAuthor}")
+    public ResponseDto<List<PostResponseDto>> getPostByAuthor(@PathVariable String postAuthor) {
+        return postService.findByAuthor(postAuthor);
+    }
+
+
+    @GetMapping
     public ResponseDto<List<PostResponseDto>> getAllPosts() {
         return postService.getAllPosts;
     }
