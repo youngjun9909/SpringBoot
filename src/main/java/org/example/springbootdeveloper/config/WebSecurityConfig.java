@@ -1,8 +1,7 @@
 package org.example.springbootdeveloper.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.springbootdeveloper.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.springbootdeveloper.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -13,26 +12,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 // 웹 보안 구성(설정)
 @Configuration // 해당 클래스가 설정 클래스로 사용됨을 명시
 @EnableWebSecurity // Spring Security의 웹 보안을 활성화
+@RequiredArgsConstructor
 // @RequiredArgsConstructor // final 필드 | @NonNull 필드에 대해 생성자를 자동 생성
 public class WebSecurityConfig {
 
-    @Autowired
-    private @Lazy UserService userService;
+    private final @Lazy JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     // 정적 리소스나 특정 URL에 대해 Spring Security가 보안 검사를 무시하도록 설정
@@ -82,10 +80,9 @@ public class WebSecurityConfig {
                                 // 특정 경로에 대한 엑세스 설정
                                 // .requestMatchers()
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
-                                new AntPathRequestMatcher("/login"),
-                                new AntPathRequestMatcher("/api/users/signup"),
-                                new AntPathRequestMatcher("/signup"),
-                                new AntPathRequestMatcher("/user")
+                                new AntPathRequestMatcher("/api/users/**"),
+                                new AntPathRequestMatcher("/user"),
+                                new AntPathRequestMatcher("/api/students/**")
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
@@ -100,6 +97,7 @@ public class WebSecurityConfig {
                 //      : 사이트 간 요청 위조의 줄임말
 
                 // csrf 공격을 방지하기 위해 활성화 하는 것을 권장
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -114,16 +112,16 @@ public class WebSecurityConfig {
             HttpSecurity http,
             // 비 크립트 패스워드 인코더
             // : 비밀번호를 암호화하는 BCryptPasswordEncoder Bean을 주입
-            BCryptPasswordEncoder bCryptpasswordEncoder,
+            BCryptPasswordEncoder bCryptpasswordEncoder
             // 사용자 세부 정보를 제공하는 UserDetailsService Bean을 주입
-            UserDetailsService userDetailsService
+//            UserDetailsService userDetailsService
     ) throws Exception {
         // DaoAuthenticationProvider
         // : DB에서 사용자 인증을 처리
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         // .setUserDetailsService();
         // : 사용자 세부 정보를 가져오는 서비스 설정
-        authProvider.setUserDetailsService(userDetailsService);
+//        authProvider.setUserDetailsService(userDetailsService);
         // 비밀번호 암호화 사용
         authProvider.setPasswordEncoder(bCryptpasswordEncoder);
         // ProviderManager: DaoAuthenticationProvider 인증 처리

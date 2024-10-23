@@ -26,10 +26,10 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "create_at", nullable = false )
+    @Column(name = "created_at", nullable = false )
     private LocalDateTime createdAt; // SQL의 datetime이 JAVA의 DateTime과 호환
 
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Builder
