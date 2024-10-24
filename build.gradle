@@ -24,6 +24,10 @@ dependencies {
     // 스프링 시큐리티 사용 스타터
     implementation('org.springframework.boot:spring-boot-starter-security')
 
+    // 프로젝트 유효성 검사를 위한 의존성 입력
+    implementation('jakarta.validation:jakarta.validation-api:3.0.2')
+//    implementation('org.hibernate.validator:hibernate.validator:8.0.0.Final')
+
 
     // JWT 의존성 추가
     implementation('io.jsonwebtoken:jjwt-api:0.11.2')

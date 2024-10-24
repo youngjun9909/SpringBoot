@@ -1,0 +1,42 @@
+Menu_Project
+
+--- Entity ---
+Menu 클래스
+- 고유 값 : id ( Long )
+- 메뉴 명 : name ( String )
+- 메뉴 설명: description ( String )
+- 메뉴 가격 : price ( int )
+- 가능 여부 : isAvailable ( boolean )
+- 카테고리: category ( String )
+- 크기 : size ( String )
+
+--- 기능 정리 ---
+1. 메뉴 생성
+2. 메뉴 전체 조회
+3. 메뉴 단건 조회
+4. 메뉴 수정
+5. 메뉴 삭제
+
+--- 프로젝트 구조 ---
+MenuController
+MenuService
+MenuRepository
+
+MenuRequestDto
+MenuResponseDto
++) ResponseDto (dto/response)
+
++) ApiMappingPattern (common/constant)
++) ResponseMessage (common/constant)
+
+--- DB 테이블 구조 ---
+create table if not exists Menu(
+	id bigint auto_increment primary key, # 메뉴 고유 값
+    name varchar(255) not null, # 매뉴 명
+    description text not null, # 메뉴 설명
+    price int not null check (price >= 0), # 가격
+    isAvailable boolean not null default true, # 가능 여부
+    category varchar(100)not null, # 카테고리
+    size varchar(50) default 'Regular', # 사이즈
+    constraint chk_category check (category in ('Food', 'Drink', 'Dessert'))
+);
