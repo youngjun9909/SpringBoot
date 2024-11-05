@@ -1,9 +1,6 @@
 package org.example.springbootdeveloper.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.springbootdeveloper.entity.Category;
 
 @Getter

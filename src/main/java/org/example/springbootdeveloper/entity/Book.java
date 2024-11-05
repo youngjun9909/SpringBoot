@@ -1,10 +1,7 @@
 package org.example.springbootdeveloper.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "book")
@@ -20,10 +17,10 @@ public class Book {
     @Column(nullable = false, length = 50)
     private String writer;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 500)
     private String content;
 
     @Enumerated(EnumType.STRING)

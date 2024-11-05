@@ -54,7 +54,7 @@ public class MenuService {
             List<Menu> menus = menuRepository.findAll();
 
             data = menus.stream()
-                    .map((menu) -> new MenuResponseDto(menu))
+                    .map(MenuResponseDto :: new)
                     .collect(Collectors.toList());
 
         } catch (Exception e) {

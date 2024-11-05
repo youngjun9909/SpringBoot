@@ -28,7 +28,7 @@ import java.io.IOException;
     - OncePerRequestFilter
     : 모든 요청마다 한번식 필터가 실행 되도록 보장
  */
-@Component
+@Component // 스프링에서 해당 클래스를 관리하도록 지정, 애플리케이션에서 자동으로 사용될 수 있도록 설정
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -58,14 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = (authorizationHeader != null && authorizationHeader.startsWith("Bearer "))
                     ? jwtProvider.removeBearer(authorizationHeader)
                     : null;
-            // 토큰이 없거나 유효하지 않으면 필터 체인을 타고 다음 단계로 이동
-            if(token == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
 
+            // 토큰이 없거나 유효하지 않으면 필터 체인을 타고 다음 단계로 이동
             if(token == null || !jwtProvider.isValidToken(token)) {
+                // 토큰이 유효하지 않은 경우
+                // : 시큐리티 설정 없이 로직이 실행
                 filterChain.doFilter(request, response);
+                // 이후의 필터를 거치지 않고 해당 메서드가 종료
                 return;
             }
 
@@ -110,3 +109,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(securityContext);
     }
 }
+
+/*
+    1. doFilterInternal
+        Authorization 헤더에서 JWT 토큰을 추출하여 검증
+        유효하지 않은 토큰은 필터 체인 다음 단꼐로 넘감
+        유효한 토큰일 경우 userID를 추출하여 인증 설정 메서드로 전달
+
+    2. setAuthenticationContext (인증 설정 메서드)
+        useId를 포함한 인증 토큰을 생성
+        요청에 대한 세부 정보를 인증 토큰에 설정
+        securityContextHolder에 사용자 인증 정볼르 설정
+        , 이후의 요청에서 인증된 사용자로 인식되도록 함
+ */

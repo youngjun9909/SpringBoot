@@ -27,11 +27,18 @@ public class AuthService {
     public ResponseDto<UserSignUpResponseDto> signup(UserSignUpRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
+        String confirmPassword = dto.getConfirmPassword();
 
         UserSignUpResponseDto data = null;
         User user = null;
 
-        try {
+        try{
+            if(!password.equals(confirmPassword)){
+                return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
+            }
+
+
+
             // 중복되는 이메일 검증
             if (userRepository.existsByEmail(email))
                 return ResponseDto.setFailed(ResponseMessage.EXIST_DATA);
@@ -64,13 +71,15 @@ public class AuthService {
         UserSignInResponseDto data = null;
         User user = null;
 
+        int exprTime = jwtProvider.getExpiration(); // 토큰 만료 시간 설정
+
         try {
             // 해당 이메일의 유저가 있는지 검색하고 있을 경우 해당 데이터를 반환
+            user = userRepository.findByEmail(email)
+                    .orElse(null);
 
-            if (userRepository.findByEmail(email).isPresent()) {
-                user = userRepository.findByEmail(email).get();
-            } else {
-                ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            if(user == null) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
             // .matches(평문 비밀번호, 암호화된 비밀번호)
@@ -79,13 +88,13 @@ public class AuthService {
             // : 일치하지 않을 경우 false
             if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
                 // 일치하지 않은 경우(!false)
-                ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
+                return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
             }
 
             // 인증 성공 후 JWT 토큰 생성
             String token = jwtProvider.generateJwtToken(email);
 
-            data = new UserSignInResponseDto(token, user);
+            data = new UserSignInResponseDto(token, user,exprTime);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
 
         } catch (Exception e) {

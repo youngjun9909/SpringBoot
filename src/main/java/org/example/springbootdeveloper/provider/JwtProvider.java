@@ -6,17 +6,21 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.example.springbootdeveloper.entity.User;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 /**
  * JwtProvider 클래스
- * : JWT 토큰을 생성하고 검증하는 역할
+ * : JWT(JSON Web Token) 토큰을 생성하고 검증하는 역할
+ *
+ * cf) JWT
+ *      : 사용자 정보를 암호화된 토큰으로 저장, 서버에 매번 요청할 때 전달 가능
+ *      : 주로 로그인 인증에 사용
+ *
  * - HS256 암호화 알고리즘을 사용하여 JWT 서명
  * - 비밀키는 Base64로 인코딩 지정 - 환경변수(jwt.secret)
  * - JWT 만료 기간은 10시간 지정 - 환경변수(jwt.expiration)
@@ -30,8 +34,15 @@ import java.util.Date;
 public class JwtProvider {
 
     // 환경 변수에 지정한 비밀키 값과 만료 시간을 가져옴
-    private final Key key; // JWT 서명에 사용할 암호화 키
-    private final int jwtExpirationMs; // JWT 토큰의 만료 시간을 저장
+    private final Key key; // JWT 서명에 사용할 암호화 키를 저장할 변수
+
+    @Value("${jwt.expiration}")
+    private int jwtExpirationMs; // JWT 토큰의 만료 시간을 저장
+
+    // 토큰 만료 시간을 밀리초로 반환하는 메서드
+    public int getExpiration() {
+        return jwtExpirationMs;
+    }
 
     public JwtProvider(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") int jwtExpirationMs) {
         // 생성자: JWTProvider 객체를 생성할 때 비밀키와 만료 시간을 초기화
@@ -138,3 +149,33 @@ public class JwtProvider {
         return jwtParser.parseClaimsJws(token).getBody();
     }
 }
+
+/*
+
+        ================ JwtProvider ================
+        1. generateJwtToken
+            사용자 ID를 포함하는 JWT를 생성하여 반환
+            현재 시간과 만료 시간 설정 및 HMAC-SHA256 서명 포함
+            사용자 인증에 활용되는 토큰
+
+        2. generateEmailValidToken
+            이메일 검증용으로 5분 동안 유효한 짧은 JWT를 생성
+            사용자 이름을 클레임으로 저장하며, 짧은 만료 시간으로 설정
+            이메일 인증 기능에 사용
+
+        3. removeBearer
+            Bearer 접두사를 제거하여 JWT만 반환
+            Authorization 헤더로부터 Bearer를 제거하는 데 사용
+
+        4. getUserIdFromJwt
+            JWT에서 사용자 ID 클레임을 추출해 반환
+            인증된 사용자를 특정하기 위한 정보로 사용
+
+        5. isValidToken
+            토큰의 유효성을 검사하여 true 또는 false를 반환
+            만료 여부와 올바른 형식인지 검증하는 역할 담당
+
+        6. getClaims
+            토큰의 클레임 정보를 추출하여 반환
+            JWT 본문에서 사용자 정보와 같은 세부 정보를 읽어옴
+ */

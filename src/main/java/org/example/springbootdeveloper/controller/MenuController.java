@@ -72,7 +72,7 @@ public class MenuController {
             @PathVariable Long id,
             @Valid @RequestBody MenuRequestDto dto,
             @AuthenticationPrincipal String userEmail
-    ) {
+    ) {;
         System.out.println("Received id: " + id);
         ResponseDto<MenuResponseDto> result = menuService.updateMenu(id, userEmail, dto);
         return ResponseEntity.status(HttpStatus.OK).body(result);
