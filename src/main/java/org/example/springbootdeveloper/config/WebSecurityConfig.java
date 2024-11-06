@@ -31,7 +31,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 /*
  * WebSecurityConfig 클래스
- * : Spring Security를 통해 웹 애플리케이션의 보안을 구성(보안 환경 설정)
+ * : Spring Security를 통해 웹 애플리케이션의 보안을 구성(보안 환경설정)
  * - JWT 필터를 적용하여 인증을 처리, CORS 및 CSRF 설정을 비활성화
  *   > 서버 간의 통신을 원활하게 처리
  * */
@@ -43,15 +43,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 // Spring Security의 웹 보안을 활성화
 // : WebSecurityConfig 클래스의 설정 사항을 사용할 수 있도록 "활성화"
 
-@RequiredArgsConstructor
-// final 필드 | @NonNull 필드에 대해 생성자를 자동 생성
+@RequiredArgsConstructor // final 필드 | @NonNull 필드에 대해 생성자를 자동 생성
 public class WebSecurityConfig {
 
     @Lazy // 지연 로딩: 의존성 주입 시점이 필터가 사용될 때 로드됨
     @Autowired
     /*
-       JwtAuthenticationFilter (Jwt 인증 필터)
-     * 요청이 들어올 때 JWT 토큰을 검증하는 필터 - 검증하여 사용자를 인증
+     * JwtAuthenticationFilter (JWT 인증 필터)
+     *
+     * 요청이 들어올 때 "JWT 토큰을 검증하는 필터" - 검증하여 사용자를 인증
      * : UsernamePasswordAuthenticationFilter 이전에 동작, JWT 토큰이 유효한지 검사하여 사용자를 인증
      * */
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -78,7 +78,7 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true); // 쿠키를 허용할지 여부 - 자격 증명을 포함한 요청 허용 여부
-        config.addAllowedOriginPattern("*"); // 모든 도메인(출처) 허용 - 어디서든지 요청 가능
+        config.addAllowedOriginPattern("*"); // 모든 도메인(출처) 허용 - 어디서든지 요청 가능*
         config.addAllowedHeader("*"); // 모든 헤더 허용
         config.addAllowedMethod("*"); // 모든 HTTP 메서드 허용 (GET, POST, PUT, DELETE 등)
 
@@ -94,7 +94,8 @@ public class WebSecurityConfig {
      * - CSRF 보호를 비활성화, CORS 정책을 활성화
      *
      * cf) CSRF(Cross-Site Request Forgery) 공격: 사용자 대신 웹 애플리케이션에서 악의적인 행동을 하는 공격
-     *      - 비동기 통신을 하는 REST API의 경우 사용자가 의도치 않게 악의적인 요청을 보내는 CSRF 공격 보호를 비활성화
+     *       - 비동기 통신을 하는 REST API의 경우 사용자가 의도치 않게
+     *           악의적인 요청을 보내는 CSRF 공격 보호를 비활성화
      *
      *     CORS(Cross-Origin Resource Sharing) 정책: 서로 다른 서버 간의 리소스 상호작용을 위한 정책
      *
@@ -178,4 +179,3 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

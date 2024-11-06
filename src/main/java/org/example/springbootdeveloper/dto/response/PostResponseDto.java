@@ -2,14 +2,12 @@ package org.example.springbootdeveloper.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.example.springbootdeveloper.entity.Comment;
+import org.example.springbootdeveloper.entity.Post;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class PostResponseDto {
     private Long id;
     private String title;
@@ -19,5 +17,12 @@ public class PostResponseDto {
     // 해당 게시글의 댓글 리스트를 포함
     private List<CommentResponseDto> comments;
 
-
+    // Post 엔티티 객체를 받아서 DTO로 변환하는 생성자
+    public PostResponseDto(Post post) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.author = post.getAuthor();
+        // Comments 필드는 별도 설정하지 않으므로 기본값인 null 지정
+    }
 }
